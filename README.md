@@ -2,4 +2,4 @@
 
 Developed by. Diego JD
 
-![Roulette game](/src/assets/ruleta.png)
+![Roulette game](/src/assets/img/ruleta.png)
