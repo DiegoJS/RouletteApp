@@ -8,19 +8,20 @@ function Roulette(): JSX.Element {
     const [isSpinning, setIsSpinning] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [awardItem, setAwardItem] = useState(0);
+    const [attemps, setAttemps] = useState(5);
+    const [pointsEarned, setPointsEarned] = useState(0);
 
-    let rotateValue = useRef(new Animated.Value(0)).current;
+    const rotateValue = useRef(new Animated.Value(0)).current;
 
     const handleStartRulette = () => {
         if (isSpinning) return;
+        if (attemps == 0) return;
 
         setIsSpinning(true);
+        setAttemps(attemps - 1);
 
-        const degreesCircle = 360;
-        const award = degreesCircle / 8;
         const randomValue =	Math.floor(Math.random() * 8);
-        const results = award * randomValue;
-   
+
         const awards = [100, 800, 700, 600, 500, 400, 300, 200];
 
         setAwardItem(awards[randomValue]);
@@ -35,6 +36,7 @@ function Roulette(): JSX.Element {
         }).start(() => {
             setIsSpinning(false);
             setShowModal(true);
+            setPointsEarned(pointsEarned + awards[randomValue]);
         });
 
     };
@@ -44,20 +46,47 @@ function Roulette(): JSX.Element {
         outputRange: ['0deg', '1440deg', '1485deg', '1530deg', '1575deg', '1620deg', '1665deg', '1710deg','1755deg'],
     });
 
+    const handleCloseGame = () => {
+      if (attemps == 0) {
+        setAttemps(5);
+        setPointsEarned(0);
+        rotateValue.setValue(0);
+      }
+      setShowModal(false);
+    };
+
     const modalGame = () => (
       <Center>
-        <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
+        <Modal isOpen={showModal} onClose={handleCloseGame}>
           <Modal.Content maxWidth="400px" borderRadius="2xl">
-              <Modal.CloseButton _icon={{color: "#fff"}}/>
+            <Modal.CloseButton _icon={{color: "#fff"}}/>
               <ImageBackground source={require('./assets/img/modalsheet.png')} resizeMode='cover'>
               <Modal.Body>
                 <Center>
-                  <Image source={require('./assets/img/illustration.png')} alt="premio" w={240} resizeMode='contain'/>
+                  {attemps == 0 ? (
+                    <Image source={require('./assets/img/gift.png')} alt="premio" w={240} resizeMode='contain'/>
+                  ) : (
+                    <Image source={require('./assets/img/illustration.png')} alt="premio" w={240} resizeMode='contain'/>
+                  )}
                 </Center>
                 <View pb="4">
-                  <Text color="white" textAlign="center" fontWeight="bold" fontSize="2xl">$ {awardItem}</Text>
+                {attemps == 0 ? (
+                  <>
+                    <Text color="white" textAlign="center" fontWeight="bold" fontSize="xl">FELICIDADES GANÓ</Text>
+                    <Text color="white" textAlign="center" fontWeight="bold" fontSize="2xl">$ {pointsEarned}</Text>
+                  </>
+                ) : (
+                  <>
+                    <Text color="white" textAlign="center" fontWeight="bold" fontSize="xl">PREMIO</Text>
+                    <Text color="white" textAlign="center" fontWeight="bold" fontSize="2xl">$ {awardItem}</Text>
+                  </>
+                )}  
                 </View>
-                <Button onPress={() => setShowModal(false)} colorScheme="success" borderRadius="full"  _text={{fontSize: 16}} py="3" px="6">Recibir mi premio</Button>
+                {attemps == 0 ? (
+                  <Button onPress={handleCloseGame} colorScheme="orange" borderRadius="full"  _text={{fontSize: 16}} py="3" px="6">Volver jugar</Button>
+                ) : (
+                  <Button onPress={handleCloseGame} colorScheme="success" borderRadius="full"  _text={{fontSize: 16}} py="3" px="6">Recibir mi premio</Button>
+                )}
               </Modal.Body>
             </ImageBackground>
           </Modal.Content>
@@ -72,10 +101,13 @@ function Roulette(): JSX.Element {
           <View style={styles.heading}>
             <View style={{position: 'absolute', zIndex: 20}}>
               <VStack py="5">
-                <Text color="white" textAlign="center" fontWeight="bold" fontSize="2xl">Gira la rueda</Text>
-                <Text color="white" textAlign="center" fontWeight="regular" fontSize="md">Te quedan 5 intentos más</Text>
+                <Text color="white" textAlign="center" fontWeight="bold" fontSize="2xl">Gira la ruleta</Text>
+                <Text color="white" textAlign="center" fontWeight="regular" fontSize="md">Te quedan {attemps} intentos.</Text>
               </VStack>
               <Button onPress={handleStartRulette} colorScheme="success" borderRadius="full" _text={{fontSize: 16}} py="3" px="6">¡Quiero probar suerte!</Button>
+              <VStack py="4">
+                <Text color="white" textAlign="center" fontWeight="bold" fontSize="md">Ganado: $ {pointsEarned}</Text>
+              </VStack>
             </View>
           </View>
           <View style={styles.rouletteContainer}>
