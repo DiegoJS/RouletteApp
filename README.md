@@ -34,6 +34,6 @@ RouletteApp se distribuye bajo la Licencia MIT. Puedes ver el archivo `LICENSE` 
 
 ## Contacto
 
-Si tienes alguna pregunta o sugerencia, no dudes en ponerte en contacto con el equipo de desarrollo en [correo electrónico del equipo] o abre un issue en el repositorio.
+Si tienes alguna pregunta o sugerencia, no dudes en ponerte en contacto con el equipo de desarrollo o abre un issue en el repositorio.
 
 Developed by. Diego JD
